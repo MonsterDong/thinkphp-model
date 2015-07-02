@@ -1,0 +1,24 @@
+<!--一个简单的基于bootstrap的分页模板-->
+<php>if($total > 0){</php>
+<div class="btn-toolbar" role="toolbar" aria-label="paginate">
+    <div aria-label="First group" role="group" class="btn-group">
+        <php>if($nowPage > 1){</php>
+            <php>$parameter[$p] = 1</php>
+            <a class="btn btn-default" role="button" href="{:U(ACTION_NAME,$parameter)}"><<</a>
+            </a>
+        <php>}</php>
+        <php>for($i=1;$i<=$maxPage;$i++){</php>
+            <php>if($i == $nowPage){</php>
+                <a class="btn btn-primary" disabled="disabled" role="button" type="button">{$i}</a>
+            <php>}else{</php>
+                <php>$parameter[$p] = $i;</php>
+                <a class="btn btn-default" role="button" href="{:U(ACTION_NAME,$parameter)}">{$i}</a>
+            <php>}</php>
+        <php>}</php>
+        <php>if($maxPage > $nowPage){</php>
+            <php>$parameter[$p] = $maxPage</php>
+            <a class="btn btn-default" href="{:U(ACTION_NAME,$parameter)}" role="button">>></a>
+        <php>}</php>
+    </div>
+</div>
+<php>}</php>
