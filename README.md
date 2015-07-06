@@ -69,7 +69,7 @@ ThinkPHP3.2 关系模型
         排除多个字段
         D('User')->except('password,username')->where(['id'=>1])->find();
         或者
-        D('User')->except(['password,username'])->where(['id'=>1])->find();
+        D('User')->except(['password','username'])->where(['id'=>1])->find();
 自动处理时间戳
 --------------------------------------------------
         默认开启的
