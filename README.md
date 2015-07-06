@@ -28,7 +28,7 @@ ThinkPHP3.2 关系模型
 查询
 --------------------------------------------------------
 ###查询一条数据使用find方法
-        由于在find方法里面做了一些处理，之后讲到的isDirty和getDirty,
+        由于在find方法里面做了一些处理，包括isDirty和getDirty,
         以及save方法的优化是基于getDirty方法的，
         所以对于一条数据的查询请使用find方法
         D('User')->where(['id'=>1])->find();
@@ -36,7 +36,7 @@ ThinkPHP3.2 关系模型
         D('User')->limit(10)->select();
 延时加载
 -----------------------------------------------
-        和其名字一样，一开并不查询关联数据，只有到你真正需要时才去查询
+        和其名字一样，一开始并不查询关联数据，只有到你真正需要时才去查询
 ###基本用法
         $user = D('User');
         $user->where(['id'=>1])->find();
@@ -105,7 +105,20 @@ mapWhere
         $user->password = md5('123456');
         $user->save();
         在这里update set时只会设置password
-
+isDirty
+---------------------------------------------------------
+        检测字段的值是否改变了,返回一个boole值
+        $user = D('User');
+        $user->where(['id'=>1])->find();
+        $user->password = md5('123456');
+        $user->isDirty();
+getDirty
+----------------------------------------------------------
+        获取当前模型修改过的字段，返回修改过的字段的数组
+        $user = D('User');
+        $user->where(['id'=>1])->find();
+        $user->password = md5('123456');
+        $user->getDirty();
 
 
 

@@ -13,6 +13,12 @@ class Notice {
 
     protected static $method = ['success','error'];
 
+    public static function clear(){
+        foreach(static::$method as $name){
+            session($name,null);
+        }
+    }
+
     public static function __callStatic($name, $arguments){
         if(in_array($name,static::$method)){
             $url = empty($arguments[1]) ? $_SERVER['HTTP_REFERER'] : $arguments[1];
