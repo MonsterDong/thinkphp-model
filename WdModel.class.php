@@ -333,6 +333,13 @@ class WdModel extends Model {
         return $this->where($conditions,null);
     }
 
+    /**
+     * add优化
+     * @param string $data
+     * @param array $options
+     * @param bool $replace
+     * @return mixed
+     */
     public function add($data='',$options=array(),$replace=false) {
         if(empty($data)){
             $data = $this->data;
@@ -344,6 +351,10 @@ class WdModel extends Model {
             $this->data['updated_at'] = $data['updated_at'];
         }
         return parent::add($data,$options,$replace);
+    }
+
+    protected function _after_insert($data,$options) {
+        $this->data = $data;
     }
 
     /**

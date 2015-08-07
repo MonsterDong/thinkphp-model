@@ -11,12 +11,16 @@ namespace WangDong;
 
 class Notice {
 
-    protected static $method = ['success','error'];
+    protected static $method = ['success','error','notice'];
 
     public static function clear(){
         foreach(static::$method as $name){
             session($name,null);
         }
+    }
+
+    public static function message($name){
+        return session($name);
     }
 
     public static function __callStatic($name, $arguments){

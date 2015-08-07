@@ -61,7 +61,7 @@ ThinkPHP3.2 关系模型
         就可以limit(10*10)
         实际情况很少这么用,这里只是为了说明使用方式
         D('User')->with(['topic',function($query){
-            $query->where(['status'=>2])->limit(100)->select();
+            $query->where(['status'=>2])->limit(100);
         }])->limit(10)->select();
 排除字段不查
 -----------------------------------------------
