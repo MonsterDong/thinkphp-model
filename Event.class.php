@@ -24,6 +24,25 @@ class Event {
         return static::$instance;
     }
 
+    protected function parseClassCallable($listener)
+    {
+        $segments = explode('@', $listener);
+
+        return [$segments[0], count($segments) == 2 ? $segments[1] : 'handle'];
+    }
+
+    public function createClassListener($listener)
+    {
+        list($class, $method) = $this->parseClassCallable($listener);
+
+        return function() use ($class, $method)
+        {
+            return call_user_func_array(
+                [$class, $method], func_get_args()
+            );
+        };
+    }
+
     public static function boot($config){
         include_once($config);
     }
@@ -38,12 +57,16 @@ class Event {
             if(is_callable($item)){
                 $self->listen[$event][] = $item;
             }
+            if(is_string($item)){
+                $self->listen[$event][] = $self->createClassListener($item);
+            }
         }
     }
 
     public static function fire(){
         $args = func_get_args();
         $event = array_shift($args);
+        $args[] = $event;
         $self = static::getInstance();
         foreach($self->listen[$event] as $callback){
             if(is_callable($callback)){

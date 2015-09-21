@@ -19,7 +19,7 @@ class WdModel extends Model {
 
     private $hash = array(); //用于临时存放多对多关系的关联信息
 
-    protected $timestamp = true;
+    protected $timestamp = false;
 
     private $node_name; //当前关系节点的名称
 
@@ -246,15 +246,40 @@ class WdModel extends Model {
      */
     public function __call($method,$args) {
         if(in_array($method,$this->relation)){
+            //$model =  D($args[0]);
+            //if(get_class($model) == get_class($this)){
+                $model =  $this->newModel($args[0]);
+            //}
             return array(
-                'model' => D($args[0]),
+                'model' => $model,
                 'type' => $method,
                 'relation_field' => $args[1],
-                'relation_table' => $args[2],
-                'relation_field2' => $args[3]
+                'relation_table' => isset($args[2]) ? $args[2] : '',
+                'relation_field2' => isset($args[3]) ? $args[3] : ''
             );
         }
         return parent::__call($method,$args);
+    }
+
+    private function newModel($name='',$layer=''){
+        if(empty($name)) return new \Think\Model;
+        $_model  =   array();
+        $layer          =   $layer? : C('DEFAULT_M_LAYER');
+        if(isset($_model[$name.$layer]))
+            return $_model[$name.$layer];
+        $class          =   parse_res_name($name,$layer);
+        if(class_exists($class)) {
+            $model      =   new $class(basename($name));
+        }elseif(false === strpos($name,'/')){
+            // 自动加载公共模块下面的模型
+            $class      =   '\\Common\\'.$layer.'\\'.$name.$layer;
+            $model      =   class_exists($class)? new $class($name) : new \Think\Model($name);
+        }else {
+            \Think\Log::record('D方法实例化没找到模型类'.$class,\Think\Log::NOTICE);
+            $model      =   new \Think\Model(basename($name));
+        }
+        $_model[$name.$layer]  =  $model;
+        return $model;
     }
 
     /**
@@ -364,7 +389,7 @@ class WdModel extends Model {
      * @param array $parameter
      * @return PaginateService
     */
-    public function paginate($listRows=20,$totalRows=0, $parameter = array()){
+    public function paginate($listRows=15,$totalRows=0, $parameter = array()){
         if($totalRows <= 0){
             $t = clone $this;
             $totalRows = $t->count();
@@ -376,5 +401,13 @@ class WdModel extends Model {
         $resultSet = $this->limit($paginate->firstRow.','.$paginate->rows)->select();
         $paginate->setData($resultSet);
         return $paginate;
+    }
+
+    /**
+     * 只更新模型的时间戳
+     * @return bool
+     */
+    public function touch(){
+        return $this->save();
     }
 } 
